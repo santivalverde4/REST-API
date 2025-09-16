@@ -2,7 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config(); // Load environment variables from .env file
-const userRoutes = require('./routes/users'); // Import user routes
+const productRoutes = require('./routes/product'); // Import product routes
 
 //Swagger
 const path = require("path");
@@ -12,10 +12,10 @@ const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerOptions = {
   definition: {
     openapi: '3.0.3',
-    info: { title: 'Users API', version: '1.0.0' },
+    info: { title: 'Products API', version: '1.0.0' },
     servers: [{ url: 'http://localhost:3000' }],
   },
-  apis: [path.resolve(__dirname, './routes/users.js')],
+  apis: [path.resolve(__dirname, './routes/product.js')],
 };
 const swaggerSpec = swaggerJsDoc(swaggerOptions)
 
@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 3000; //Environment variables
 
 //Middlewares: intermediate functions that handle requests
 app.use(express.json()); // json required for server to understand json data
-app.use('/api', userRoutes);
+app.use('/api', productRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //Routes
