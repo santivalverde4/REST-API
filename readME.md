@@ -323,21 +323,6 @@ npm install
 npm run clean  # (si está configurado)
 ```
 
-### Logs y Debugging:
-- Los logs aparecen en la consola durante desarrollo
-- Usa las herramientas de desarrollador del navegador con Swagger UI
-- MongoDB Compass para inspeccionar la base de datos
-
-## 📈 Escalabilidad
-
-### Consideraciones para Producción:
-- **Índices adicionales** según patrones de consulta
-- **Rate limiting** para prevenir abuso
-- **Autenticación y autorización** para seguridad
-- **Logging estructurado** para monitoreo
-- **Tests automatizados** para CI/CD
-- **Compresión GZIP** para responses grandes
-- **CORS configurado** para frontend
 
 ## 👨‍💻 Autor
 
