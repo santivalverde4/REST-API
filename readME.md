@@ -1,47 +1,24 @@
-# REST API Learning Project
+# API REST de Gestión de Productos
 
-Este es un proyecto educativo para aprender a cr## 📚 Documentación de la API
+API REST completa para la gestión de inventarios y productos, desarrollada con Node.js, Express, MongoDB y documentada con Swagger UI.
 
-La API cuenta con documentación interactiva completa usando Swagger UI:
+## 📚 Descripción del Proyecto
 
-**Acceso a la documentación:**
-- **URL**: `http://localhost:3000/api-docs`
-- **Características**:
-  - Documentación automática de todos los endpoints
-  - Esquemas de datos definidos con OpenAPI 3.0
-  - Interfaz interactiva para probar endpoints
-  - Ejemplos de request/response
-  - Validación de parámetros en tiempo real
+Esta API permite gestionar un catálogo de productos con funcionalidades completas de:
+- **CRUD de productos** (Crear, Leer, Actualizar, Eliminar)
+- **Gestión de inventarios** con ajustes de stock
+- **Búsquedas avanzadas** con filtros múltiples
+- **Paginación** para grandes volúmenes de datos
+- **Documentación interactiva** con Swagger UI
+- **Validaciones robustas** y manejo de errores
 
-**Esquemas documentados:**
-- `UserInput` - Datos para crear usuario
-- `User` - Usuario completo con timestamps
-- `UserUpdate` - Datos para actualizar
-- `UpdateResult` - Respuesta de actualización
-- `DeleteResult` - Respuesta de eliminación
-- `Error` - Formato de erroresREST API usando Node.js, Express y MongoDB.
+## 🛠️ Stack Tecnológico
 
-## 📚 Objetivo del Proyecto
-
-Aprender los conceptos fundamentales de:
-- Creación de APIs REST
-- Operaciones CRUD (Create, Read, Update, Delete)
-- Conexión con bases de datos MongoDB
-- Manejo de rutas y middlewares en Express
-- Documentación de APIs con Swagger/OpenAPI
-- Validación de datos
-- Manejo de errores
-- Buenas prácticas en desarrollo backend
-
-## 🛠️ Tecnologías Utilizadas
-
-- **Node.js** - Entorno de ejecución de JavaScript
-- **Express.js** - Framework web para Node.js
-- **MongoDB** - Base de datos NoSQL
-- **Mongoose** - ODM para MongoDB
-- **dotenv** - Manejo de variables de entorno
-- **nodemon** - Herramienta de desarrollo para reinicio automático
-- **Swagger UI Express** - Documentación interactiva de la API
+- **Backend**: Node.js + Express.js
+- **Base de Datos**: MongoDB con Mongoose ODM
+- **Documentación**: Swagger UI + OpenAPI 3.0
+- **Desarrollo**: Nodemon para hot reload
+- **Configuración**: dotenv para variables de entorno
 
 ## 📁 Estructura del Proyecto
 
@@ -50,13 +27,13 @@ REST-API/
 │
 ├── src/
 │   ├── models/
-│   │   └── user.js          # Modelo de usuario (Mongoose Schema + Swagger Schemas)
+│   │   └── product.js       # Modelo de producto + esquemas Swagger
 │   ├── routes/
-│   │   └── users.js         # Rutas para operaciones de usuarios + OpenAPI docs
-│   └── index.js             # Archivo principal del servidor
+│   │   └── product.js       # Endpoints REST + documentación OpenAPI
+│   └── index.js             # Servidor principal + configuración Swagger
 │
-├── package.json             # Dependencias y scripts
-├── .env                     # Variables de entorno (no incluido en git)
+├── package.json             # Dependencias y scripts npm
+├── .env                     # Variables de entorno
 └── README.md               # Este archivo
 ```
 
@@ -64,7 +41,7 @@ REST-API/
 
 ### 1. Clonar el repositorio
 ```bash
-git clone <url-del-repositorio>
+git clone [URL_DEL_REPOSITORIO]
 cd REST-API
 ```
 
@@ -73,218 +50,300 @@ cd REST-API
 npm install
 ```
 
-**Dependencias principales instaladas:**
-- `express` - Framework web
-- `mongoose` - ODM para MongoDB
-- `dotenv` - Variables de entorno
-- `swagger-ui-express` - Documentación API
-- `nodemon` (dev) - Reinicio automático
-
 ### 3. Configurar variables de entorno
-Crear un archivo `.env` en la raíz del proyecto:
+Crear archivo `.env` en la raíz:
 ```env
 PORT=3000
-MONGODB_URI=mongodb://localhost:27017/rest-api-learning
+MONGODB_URI=mongodb://localhost:27017/products-api
 ```
 
-### 4. Ejecutar el servidor
+### 4. Iniciar el servidor
 ```bash
-# Modo desarrollo (con nodemon)
+# Modo desarrollo (recomendado)
 npm run start
 
-# O directamente con node
+# Modo producción
 node src/index.js
 ```
 
-## � Documentación de la API
+## 📊 Modelo de Producto
 
-La API cuenta con documentación interactiva usando Swagger UI:
+### Campos del Producto:
+- **`sku`** (String, único, requerido) - Código identificador del producto
+- **`name`** (String, requerido) - Nombre comercial del producto
+- **`brand`** (String, opcional) - Marca del producto
+- **`category`** (String, requerido) - Categoría del producto
+- **`unit`** (String, requerido) - Unidad de venta: `pz`, `caja`, `m`, `kg`, `lt`
+- **`price`** (Number, requerido, ≥ 0) - Precio de venta
+- **`cost`** (Number, opcional, ≥ 0) - Costo del producto
+- **`stock`** (Number, requerido, ≥ 0) - Existencias actuales
+- **`minStock`** (Number, opcional, ≥ 0, default: 0) - Nivel mínimo de inventario
+- **`location`** (String, opcional) - Ubicación en bodega
+- **`supplierId`** (String, opcional) - ID del proveedor
+- **`tags`** (Array[String], opcional) - Etiquetas para búsqueda
+- **`imageUrl`** (String, opcional) - URL de imagen del producto
+- **`active`** (Boolean, default: true) - Estado activo/inactivo
+- **`attributes`** (Array[{key, value}], opcional) - Atributos personalizados
+- **`createdAt`** (Date, automático) - Fecha de creación
+- **`updatedAt`** (Date, automático) - Fecha de última actualización
 
-**Acceso a la documentación:**
-- URL: `http://localhost:3000/api-docs`
-- Swagger UI permite probar los endpoints directamente desde el navegador
-- Documentación automática de todos los endpoints disponibles
+### Ejemplo de Producto:
+```json
+{
+  "sku": "HAM-16OZ-STAN001",
+  "name": "Martillo 16oz mango fibra",
+  "brand": "Stanley",
+  "category": "Herramientas",
+  "unit": "pz",
+  "price": 12990,
+  "cost": 8500,
+  "stock": 24,
+  "minStock": 5,
+  "location": "A-1-B",
+  "supplierId": "PROV-001",
+  "tags": ["martillo", "obrero", "construccion"],
+  "imageUrl": "https://example.com/images/martillo-stanley.jpg",
+  "attributes": [
+    {"key": "peso", "value": "16oz"},
+    {"key": "material", "value": "fibra de vidrio"}
+  ]
+}
+```
 
-## �📋 Funcionalidades Implementadas
+## 🔗 Endpoints de la API
 
-### Modelo de Usuario
-El modelo incluye:
-- `name` (String, requerido)
-- `email` (String, requerido, único)
-- `age` (Number, requerido)
-- `password` (String, requerido)
-- `timestamps` (createdAt, updatedAt - automático)
-
-### Rutas Disponibles
+### Base URL: `http://localhost:3000/api`
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| GET    | `/`      | Mensaje de bienvenida |
-| GET    | `/api/users` | Obtener todos los usuarios |
-| POST   | `/api/users` | Crear un nuevo usuario |
-| GET    | `/api/users/:id` | Obtener usuario por ID |
-| GET    | `/api/users/filter` | Filtrar usuarios por nombre/edad |
-| PUT    | `/api/users/:id` | Actualizar usuario completo |
-| PATCH  | `/api/users/:id` | Actualizar usuario parcial |
-| DELETE | `/api/users/:id` | Eliminar usuario |
-| GET    | `/api-docs` | Documentación Swagger |
+| **GET** | `/products` | Listar productos con filtros y paginación |
+| **POST** | `/products` | Crear un nuevo producto |
+| **GET** | `/products/:id` | Obtener producto por ID |
+| **PATCH** | `/products/:id` | Actualizar producto parcialmente |
+| **DELETE** | `/products/:id` | Eliminar producto (soft delete) |
+| **PATCH** | `/products/:id/adjust-stock` | Ajustar stock del producto |
 
-## 🧪 Pruebas de la API
+### Documentación Interactiva
+- **Swagger UI**: `http://localhost:3000/api-docs`
 
-### Método 1: Swagger UI (Recomendado)
-1. Ejecuta el servidor: `npm run start`
-2. Abre en tu navegador: `http://localhost:3000/api-docs`
-3. Prueba los endpoints directamente desde la interfaz
+## 🔍 Filtros y Búsqueda
 
-### Método 2: cURL
+### Parámetros de Query disponibles:
 
-### Obtener todos los usuarios
+#### Búsqueda General:
+- **`q`** - Busca en nombre, marca y categoría
+  ```
+  GET /api/products?q=martillo
+  ```
+
+#### Filtros Específicos:
+- **`category`** - Filtrar por categoría
+- **`brand`** - Filtrar por marca
+- **`minPrice`** - Precio mínimo
+- **`maxPrice`** - Precio máximo
+- **`active`** - Estado (true/false)
+- **`minStockAlert`** - Solo productos con stock bajo
+
+#### Paginación:
+- **`limit`** - Número de productos por página (default: 10)
+- **`skip`** - Productos a omitir (default: 0)
+
+### Ejemplos de Uso:
 ```bash
-curl -X GET http://localhost:3000/api/users
+# Búsqueda general
+GET /api/products?q=martillo&limit=5
+
+# Filtro por categoría y marca
+GET /api/products?category=Herramientas&brand=Stanley
+
+# Productos con precio entre $1000 y $50000
+GET /api/products?minPrice=1000&maxPrice=50000
+
+# Productos con stock bajo
+GET /api/products?minStockAlert=true
+
+# Paginación (página 3, 20 productos por página)
+GET /api/products?limit=20&skip=40
 ```
 
-### Crear un nuevo usuario
+## 📝 Ejemplos de Uso
+
+### 1. Crear un Producto
 ```bash
-curl -X POST http://localhost:3000/api/users \
+curl -X POST http://localhost:3000/api/products \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Juan Pérez",
-    "email": "juan@email.com",
-    "age": 25,
-    "password": "mipassword123"
+    "sku": "TAL-12V-DEW001",
+    "name": "Taladro inalámbrico 12V",
+    "brand": "DeWalt",
+    "category": "Herramientas Eléctricas",
+    "unit": "pz",
+    "price": 45990,
+    "cost": 32000,
+    "stock": 15,
+    "minStock": 3,
+    "tags": ["taladro", "inalambrico", "dewalt"],
+    "attributes": [
+      {"key": "voltaje", "value": "12V"},
+      {"key": "bateria", "value": "Li-ion"}
+    ]
   }'
 ```
 
-### Obtener usuario por ID
+### 2. Buscar Productos
 ```bash
-curl -X GET http://localhost:3000/api/users/[ID_DEL_USUARIO]
+# Buscar todos los taladros
+curl "http://localhost:3000/api/products?q=taladro"
+
+# Herramientas DeWalt con paginación
+curl "http://localhost:3000/api/products?brand=DeWalt&category=Herramientas&limit=10&skip=0"
 ```
 
-### Filtrar usuarios
+### 3. Ajustar Stock
 ```bash
-# Por nombre
-curl -X GET "http://localhost:3000/api/users/filter?name=Juan"
-
-# Por edad mayor a X
-curl -X GET "http://localhost:3000/api/users/filter?age=25"
-
-# Combinado
-curl -X GET "http://localhost:3000/api/users/filter?name=Juan&age=25"
-```
-
-### Actualizar usuario
-```bash
-curl -X PUT http://localhost:3000/api/users/[ID_DEL_USUARIO] \
+# Reducir stock por venta
+curl -X PATCH http://localhost:3000/api/products/[PRODUCT_ID]/adjust-stock \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Juan Carlos",
-    "email": "juancarlos@email.com",
-    "age": 26,
-    "password": "nuevapassword123"
+    "adjustment": -3,
+    "reason": "Venta al cliente"
+  }'
+
+# Aumentar stock por compra
+curl -X PATCH http://localhost:3000/api/products/[PRODUCT_ID]/adjust-stock \
+  -H "Content-Type: application/json" \
+  -d '{
+    "adjustment": 50,
+    "reason": "Compra a proveedor"
   }'
 ```
 
-### Eliminar usuario
+### 4. Actualizar Producto
 ```bash
-curl -X DELETE http://localhost:3000/api/users/[ID_DEL_USUARIO]
+curl -X PATCH http://localhost:3000/api/products/[PRODUCT_ID] \
+  -H "Content-Type: application/json" \
+  -d '{
+    "price": 47990,
+    "stock": 20,
+    "location": "B-2-A"
+  }'
 ```
 
-## 📝 Conceptos Aprendidos
+## 📊 Respuestas de la API
 
-### 1. **REST API**
-- Arquitectura RESTful
-- Métodos HTTP (GET, POST, PUT, DELETE)
-- Códigos de estado HTTP
-- Estructura de URLs
+### Listado de Productos:
+```json
+{
+  "products": [...],
+  "total": 150,
+  "limit": 10,
+  "skip": 0,
+  "hasMore": true
+}
+```
 
-### 2. **Express.js**
-- Configuración de servidor
-- Middlewares
-- Enrutamiento
-- Manejo de JSON
+### Ajuste de Stock:
+```json
+{
+  "message": "Stock adjusted successfully",
+  "product": {...},
+  "previousStock": 15,
+  "newStock": 12,
+  "adjustment": -3,
+  "reason": "Venta al cliente"
+}
+```
 
-### 3. **MongoDB & Mongoose**
-- Conexión a base de datos
-- Esquemas y modelos
-- Operaciones CRUD
-- Timestamps automáticos
+### Errores:
+```json
+{
+  "message": "Product not found"
+}
+```
 
-### 4. **Buenas Prácticas**
-- Separación de responsabilidades
-- Variables de entorno
-- Manejo de errores
-- Estructura de carpetas
-- Documentación con Swagger
+## ⚠️ Códigos de Estado HTTP
 
-### 5. **Documentación API**
-- Swagger UI para documentación interactiva
-- Definición de esquemas OpenAPI
-- Testing directo desde el navegador
+- **200** - OK (consulta exitosa)
+- **201** - Created (producto creado)
+- **400** - Bad Request (datos inválidos)
+- **404** - Not Found (producto no encontrado)
+- **409** - Conflict (SKU duplicado)
+- **500** - Internal Server Error (error del servidor)
 
-## 🔧 Próximos Pasos
+## 🧪 Testing con Swagger UI
 
-- [x] Implementar rutas PUT y DELETE
-- [x] Agregar documentación con Swagger
-- [x] Configurar esquemas OpenAPI completos
-- [x] Documentar todos los endpoints principales
-- [ ] Agregar validación de datos con Joi
-- [ ] Implementar autenticación con JWT
-- [ ] Agregar middleware de logging (Morgan)
-- [ ] Implementar paginación en consultas
-- [ ] Agregar tests unitarios (Jest)
-- [ ] Implementar rate limiting
-- [ ] Agregar CORS policy
-- [ ] Implementar filtros avanzados
+1. **Iniciar el servidor**: `npm run start`
+2. **Abrir navegador**: `http://localhost:3000/api-docs`
+3. **Explorar endpoints**: Cada endpoint tiene ejemplos y formularios interactivos
+4. **Probar directamente**: Ejecutar requests desde la interfaz
+5. **Ver respuestas**: Analizar resultados en tiempo real
 
-## 📖 Recursos de Aprendizaje
+## 🔧 Funcionalidades Avanzadas
 
-- [Express.js Documentation](https://expressjs.com/)
-- [Mongoose Documentation](https://mongoosejs.com/)
-- [Swagger/OpenAPI Documentation](https://swagger.io/docs/)
-- [REST API Best Practices](https://restfulapi.net/)
-- [HTTP Status Codes](https://httpstatuses.com/)
+### Gestión de Inventarios
+- **Seguimiento de stock** en tiempo real
+- **Alertas de stock mínimo** automáticas
+- **Auditoría de movimientos** con motivos
+- **Validación de stock negativo**
 
-## 🐛 Problemas Comunes
+### Búsqueda Inteligente
+- **Búsqueda de texto completo** en múltiples campos
+- **Filtros combinables** para búsquedas precisas
+- **Paginación eficiente** para grandes catálogos
+- **Índices optimizados** para mejor performance
 
-### Error: "modules is not defined"
-- **Causa**: Error de escritura en `module.exports`
-- **Solución**: Verificar que sea `module.exports` y no `modules.exports`
+### Validaciones
+- **SKU único** en toda la base de datos
+- **Precios y costos no negativos**
+- **Unidades de medida predefinidas**
+- **URLs válidas** para imágenes
+- **Atributos flexibles** con validación de estructura
 
-### Error: "argument handler must be a function"
-- **Causa**: Router no exportado correctamente
-- **Solución**: Asegurar que el archivo de rutas termine con `module.exports = router;`
+## 🛡️ Buenas Prácticas Implementadas
 
-### Error: Swagger no muestra la documentación
-- **Causa**: Configuración incorrecta de Swagger UI
-- **Solución**: Verificar que el servidor incluya la configuración de Swagger y que las anotaciones estén correctas
+- **Separación de responsabilidades** (Modelo, Rutas, Controlador)
+- **Validación robusta** con mensajes descriptivos
+- **Manejo de errores** centralizado
+- **Documentación completa** con OpenAPI 3.0
+- **Soft delete** para preservar historial
+- **Índices de base de datos** para performance
+- **Variables de entorno** para configuración
 
-### Error: No aparecen los endpoints en Swagger
-- **Causa**: Comentarios JSDoc mal formateados
-- **Solución**: Verificar que los comentarios `@openapi` estén correctamente estructurados
+## 🔧 Desarrollo y Mantenimiento
 
-## 🎯 Estado del Proyecto
+### Scripts Disponibles:
+```bash
+# Iniciar en desarrollo
+npm run start
 
-✅ **Completado:**
-- API REST básica funcionando
-- Conexión a MongoDB
-- Operaciones CRUD completas
-- Documentación Swagger implementada
-- Esquemas OpenAPI definidos
-- Endpoints documentados
+# Instalar dependencias
+npm install
 
-🔄 **En progreso:**
-- Mejoras en la documentación
-- Validación de datos
+# Limpiar node_modules
+npm run clean  # (si está configurado)
+```
 
-📋 **Pendiente:**
-- Autenticación y autorización
-- Tests automatizados
-- Deployment
+### Logs y Debugging:
+- Los logs aparecen en la consola durante desarrollo
+- Usa las herramientas de desarrollador del navegador con Swagger UI
+- MongoDB Compass para inspeccionar la base de datos
+
+## 📈 Escalabilidad
+
+### Consideraciones para Producción:
+- **Índices adicionales** según patrones de consulta
+- **Rate limiting** para prevenir abuso
+- **Autenticación y autorización** para seguridad
+- **Logging estructurado** para monitoreo
+- **Tests automatizados** para CI/CD
+- **Compresión GZIP** para responses grandes
+- **CORS configurado** para frontend
 
 ## 👨‍💻 Autor
 
-Santiago Valverde - Proyecto de aprendizaje para BD2
+**Santiago Valverde**  
+Proyecto desarrollado para aprendizaje de APIs REST y gestión de inventarios.
 
 ## 📄 Licencia
 
-Este proyecto es solo para fines educativos.
+Este proyecto es de uso educativo y demostrativo.
